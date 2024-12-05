@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/AudioComponent.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "InputAction.h"
@@ -27,6 +28,20 @@ protected:
 	UInputAction* InputMove;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	UInputAction* InputLook;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	UInputAction* InputJump;
+
+	// Reference to the Audio Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
+	UAudioComponent* AudioComponent;
+
+	//sound for when the player jumps
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* JumpSound;
+
+	//timer and seconds count
+	int secondsLeft;
+	FTimerHandle TimerHandle;
 
 public:	
 	// Called every frame
@@ -36,5 +51,13 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void Move(const FInputActionValue& Value);
+
 	void Look(const FInputActionValue& Value);
+
+	void MyJump();
+
+	void countDown();
+
+	UFUNCTION(BlueprintCallable)
+	int GetSecondsLeft();
 };

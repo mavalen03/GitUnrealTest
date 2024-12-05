@@ -12,12 +12,22 @@ AControllableCharacter::AControllableCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Initialize the audio component and attach it to the root component
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(RootComponent);
+	AudioComponent->bAutoActivate = false; // Do not play sound automatically on start
 }
 
 // Called when the game starts or when spawned
 void AControllableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	JumpSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Audio/Jump.Jump"));
+
+	secondsLeft = 30;
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AControllableCharacter::countDown, 2.f, true);
 	
 }
 
@@ -43,6 +53,8 @@ void AControllableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 	PEI->BindAction(InputMove, ETriggerEvent::Triggered, this, &AControllableCharacter::Move);
 	PEI->BindAction(InputLook, ETriggerEvent::Triggered, this, &AControllableCharacter::Look);
+	PEI->BindAction(InputJump, ETriggerEvent::Triggered, this, &AControllableCharacter::MyJump);
+
 }
 
 void AControllableCharacter::Move(const FInputActionValue& Value)
@@ -82,5 +94,26 @@ void AControllableCharacter::Look(const FInputActionValue& Value)
 			AddControllerPitchInput(-LookValue.Y);
 		}
 	}
+}
+
+void AControllableCharacter::MyJump() {
+
+	if (JumpSound && !AudioComponent->IsPlaying()) // make sure the sound and component are valid, and sound is not already playing
+	{
+		// Set the sound to play and start it
+		AudioComponent->SetSound(JumpSound);
+		AudioComponent->Play();
+	}
+	ACharacter::Jump();
+}
+
+void AControllableCharacter::countDown()
+{
+	secondsLeft--;
+}
+
+int AControllableCharacter::GetSecondsLeft()
+{
+	return secondsLeft;
 }
 
