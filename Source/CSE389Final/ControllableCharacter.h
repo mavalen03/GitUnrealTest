@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	UInputAction* InputJump;
 
+	//get the collision component from the bp
+	UCapsuleComponent* CollisionComp;
+
 	// Reference to the Audio Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
 	UAudioComponent* AudioComponent;
@@ -42,6 +45,9 @@ protected:
 	//timer and seconds count
 	int secondsLeft;
 	FTimerHandle TimerHandle;
+
+	//numer of eggs collected
+	int numEggs;
 
 public:	
 	// Called every frame
@@ -60,4 +66,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int GetSecondsLeft();
+
+	UFUNCTION(BlueprintCallable)
+	int GetNumEggs();
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 };

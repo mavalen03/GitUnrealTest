@@ -5,6 +5,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AControllableCharacter::AControllableCharacter()
@@ -27,7 +28,15 @@ void AControllableCharacter::BeginPlay()
 
 	secondsLeft = 30;
 
+	numEggs = 0;
+
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AControllableCharacter::countDown, 2.f, true);
+
+	CollisionComp = FindComponentByClass<UCapsuleComponent>();
+
+	if (CollisionComp) {
+		CollisionComp->OnComponentHit.AddDynamic(this, &AControllableCharacter::OnHit);
+	}
 	
 }
 
@@ -115,5 +124,28 @@ void AControllableCharacter::countDown()
 int AControllableCharacter::GetSecondsLeft()
 {
 	return secondsLeft;
+}
+
+int AControllableCharacter::GetNumEggs()
+{
+	return numEggs;
+}
+
+void AControllableCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor)
+	{
+		// Get the class name of the other actor
+		FString ClassName = OtherActor->GetClass()->GetName();
+
+		if (ClassName.Contains("BP_Egg"))
+		{
+			//count the egg
+			numEggs++;
+
+			//get rid of the egg
+			OtherActor->Destroy();
+		}
+	}
 }
 
