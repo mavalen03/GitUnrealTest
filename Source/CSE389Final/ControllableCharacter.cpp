@@ -146,6 +146,15 @@ void AControllableCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
 			//get rid of the egg
 			OtherActor->Destroy();
 		}
+
+		if (ClassName.Contains("BP_Exit"))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Found Exit"));
+			if (numEggs == 3)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Can Exit"));
+			}
+		}
 	}
 }
 
