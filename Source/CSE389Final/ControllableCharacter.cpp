@@ -107,7 +107,7 @@ void AControllableCharacter::Look(const FInputActionValue& Value)
 
 void AControllableCharacter::MyJump() {
 
-	if (JumpSound && !AudioComponent->IsPlaying()) // make sure the sound and component are valid, and sound is not already playing
+	if (JumpSound && !AudioComponent->IsPlaying() && !GetCharacterMovement()->IsFalling()) // make sure the sound and component are valid, and sound is not already playing
 	{
 		// Set the sound to play and start it
 		AudioComponent->SetSound(JumpSound);

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/AudioComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "InputActionValue.h"
 #include "InputAction.h"
 #include "ControllableCharacter.generated.h"
