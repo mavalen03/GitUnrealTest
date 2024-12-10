@@ -26,9 +26,13 @@ void AControllableCharacter::BeginPlay()
 
 	JumpSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Audio/Jump.Jump"));
 
-	secondsLeft = 30;
+	EggSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Audio/EggCollected.EggCollected"));
+
+	secondsLeft = 45;
 
 	numEggs = 0;
+
+	health = 100;
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AControllableCharacter::countDown, 2.f, true);
 
@@ -121,6 +125,12 @@ void AControllableCharacter::countDown()
 	secondsLeft--;
 }
 
+void AControllableCharacter::DealDamage(int damage)
+{
+	health -= damage;
+	UE_LOG(LogTemp, Warning, TEXT("%d"), health);
+}
+
 int AControllableCharacter::GetSecondsLeft()
 {
 	return secondsLeft;
@@ -131,12 +141,19 @@ int AControllableCharacter::GetNumEggs()
 	return numEggs;
 }
 
+int AControllableCharacter::GetHealth()
+{
+	return health;
+}
+
 void AControllableCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	if (OtherActor)
 	{
 		// Get the class name of the other actor
 		FString ClassName = OtherActor->GetClass()->GetName();
+
+		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *OtherActor->GetClass()->GetName());
 
 		if (ClassName.Contains("BP_Egg"))
 		{
@@ -145,6 +162,10 @@ void AControllableCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
 
 			//get rid of the egg
 			OtherActor->Destroy();
+
+			// Set the sound to play and start it
+			AudioComponent->SetSound(EggSound);
+			AudioComponent->Play();
 		}
 
 		if (ClassName.Contains("BP_Exit"))

@@ -27,6 +27,14 @@ protected:
 	//a variable to hold a reference to our player when we need it
 	class AControllableCharacter* Player;
 
+	// Reference to the Audio Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
+	UAudioComponent* AudioComponent;
+
+	//sound for when the player jumps
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* DamageSound;
+
 	//collision for detecting the player near the enemy
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* PlayerCollisionDetection;

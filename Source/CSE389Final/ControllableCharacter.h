@@ -43,12 +43,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundBase* JumpSound;
 
+	//sound for when the player gets an egg
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* EggSound;
+
 	//timer and seconds count
 	int secondsLeft;
 	FTimerHandle TimerHandle;
 
 	//numer of eggs collected
 	int numEggs;
+
+	//player health
+	int health;
 
 public:	
 	// Called every frame
@@ -65,11 +72,16 @@ public:
 
 	void countDown();
 
+	void DealDamage(int damage);
+
 	UFUNCTION(BlueprintCallable)
 	int GetSecondsLeft();
 
 	UFUNCTION(BlueprintCallable)
 	int GetNumEggs();
+
+	UFUNCTION(BlueprintCallable)
+	int GetHealth();
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);

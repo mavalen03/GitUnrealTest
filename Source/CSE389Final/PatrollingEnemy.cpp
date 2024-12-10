@@ -25,6 +25,11 @@ APatrollingEnemy::APatrollingEnemy()
 	PlayerAttackDetection = CreateDefaultSubobject<UBoxComponent>(TEXT("Player Attack Detection"));
 	PlayerAttackDetection->SetupAttachment(GetMesh(), TEXT("head"));
 
+	// Initialize the audio component and attach it to the root component
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(RootComponent);
+	AudioComponent->bAutoActivate = false; // Do not play sound automatically on start
+
 	PlayerDetected = false;
 	CanAttackPlayer = false;
 
@@ -46,6 +51,8 @@ void APatrollingEnemy::BeginPlay()
 	PlayerAttackDetection->OnComponentBeginOverlap.AddDynamic(this, &APatrollingEnemy::OnPlayerAttackOverlapBegin);
 	PlayerAttackDetection->OnComponentEndOverlap.AddDynamic(this, &APatrollingEnemy::OnPlayerAttackOverlapEnd);
 	//DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &APatrollingEnemy::OnDealDamageOverlapBegin);
+
+	DamageSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Audio/Damage.Damage"));
 	
 }
 
@@ -118,6 +125,28 @@ void APatrollingEnemy::OnPlayerAttackOverlapBegin(UPrimitiveComponent* Overlappe
 		CanAttackPlayer = true;
 		//deal damage to the player
 		//UE_LOG(LogTemp, Warning, TEXT("Player Damaged"));
+
+		// Launch the player backward
+		if (Player->IsValidLowLevel())
+		{
+			// Define a fixed launch speed
+			float LaunchSpeed = 4000.0f; // Adjust as needed
+
+			// Get the backward direction relative to the enemy's forward vector
+			FVector BackwardDirection = -Player->GetActorForwardVector().GetSafeNormal();
+
+			// Scale the backward direction by the fixed launch speed
+			FVector LaunchVelocity = BackwardDirection * LaunchSpeed;
+
+			// Launch the player character
+			Player->LaunchCharacter(LaunchVelocity, false, false);
+
+			Player->DealDamage(10);
+
+			// Set the sound to play and start it
+			AudioComponent->SetSound(DamageSound);
+			AudioComponent->Play();
+		}
 	}
 
 }
